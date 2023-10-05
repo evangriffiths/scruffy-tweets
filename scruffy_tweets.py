@@ -32,8 +32,7 @@ def generate_tweet(prompt):
 def format_response(fact):
     return {"text": "{}".format(fact)}
 
-
-if __name__ == "__main__":
+def main():
     auth = OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
     action = random.choice(["post"]) # TODO support "reply"
     if action == "post":
@@ -51,3 +50,6 @@ if __name__ == "__main__":
         # url = 'https://api.twitter.com/1.1/search/tweets.json?q=nasa&result_type=popular'
         # response = requests.get(url, auth=auth)
         raise NotImplementedError("Replies not implemented yet")
+
+if __name__ == "__main__":
+    main()
