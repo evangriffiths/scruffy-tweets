@@ -12,5 +12,4 @@ def index():
     return flask.redirect("https://twitter.com/ScruffyActually")
 
 if __name__ == "__main__":
-    # Run locally for development
     app.run(debug=True)
