@@ -2,6 +2,8 @@
 
 A twitter bot that tweets about life as Ian McEwan's pet cocker spaniel.
 
+![Scruffy profile](scruffy_profile.png)
+
 Uses Llama2-7B-chat to generate the tweet content.
 
 ## Setup
@@ -69,3 +71,5 @@ Add a new environment variable to you `.env` file to enable html requests to Dee
 ```bash
 DEEPCTLTOKEN="..."
 ```
+
+The Flask web app `app.py` (hosted on [Render](https://scruffy-tweets.onrender.com)) makes a tweet when launched. This is scheduled to run daily (at 9am with a random delay of max 1hr) via a [cron job](https://console.cron-job.org/).
