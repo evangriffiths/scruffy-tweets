@@ -58,12 +58,7 @@ def format_response(fact):
     return {"text": "{}".format(fact)}
 
 
-if __name__ == "__main__":
-    # Add argparse to support 'source' arg
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model-source", type=str, choices=["local", "cloud"], default="local")
-    args = parser.parse_args()
-
+def main(model_source: str = "local"):
     auth = OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
     action = random.choice(["post"]) # TODO support "reply"
     if action == "post":
@@ -71,7 +66,7 @@ if __name__ == "__main__":
         response = requests.post(
             auth=auth,
             url="https://api.twitter.com/2/tweets",
-            json=format_response(generate_tweet(prompt=prompt, model_source=args.model_source)),
+            json=format_response(generate_tweet(prompt=prompt, model_source=model_source)),
             headers={"Content-Type": "application/json"}
         )
         if not response.ok:
@@ -81,3 +76,9 @@ if __name__ == "__main__":
         # url = 'https://api.twitter.com/1.1/search/tweets.json?q=nasa&result_type=popular'
         # response = requests.get(url, auth=auth)
         raise NotImplementedError("Replies not implemented yet")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model-source", type=str, choices=["local", "cloud"], default="local")
+    args = parser.parse_args()
+    main(model_source=args.model_source)
