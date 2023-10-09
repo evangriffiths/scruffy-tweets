@@ -63,3 +63,9 @@ TODO this is unusable currently as the image is ~4GB, whereas Render's free tier
 While figuring out how to free-host the model and serve queries by executing the compiled llama.cpp binary, we can use [Deepinfra's cloud service](https://deepinfra.com/meta-llama/Llama-2-7b-chat-hf). With pricing at $0.0002/Ktoken, it's basically free for our needs.
 
 We use this by specifying the command-line arg `--model-source cloud`.
+
+Add a new environment variable to you `.env` file to enable html requests to Deepinfra:
+
+```bash
+DEEPCTLTOKEN="..."
+```

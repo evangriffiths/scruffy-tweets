@@ -7,7 +7,6 @@ import random
 import requests
 from requests_oauthlib import OAuth1
 import subprocess
-import typing as t
 
 dotenv.load_dotenv()
 consumer_key = os.environ.get("CONSUMER_KEY") # == API key
@@ -16,7 +15,7 @@ access_token = os.environ.get("ACCESS_TOKEN")
 access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")
 deepctl_token = os.environ.get("DEEPCTLTOKEN")
 
-def generate_tweet(prompt: str, model_source: t.Literal["local", "cloud"]):
+def generate_tweet(prompt: str, model_source: str):
     formatted_prompt = f"[INST] {prompt} [/INST]"
 
     if model_source == "local":
