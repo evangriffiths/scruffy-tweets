@@ -8,7 +8,7 @@ app = flask.Flask(__name__)
 @app.route("/")
 def index():
     os.system("make")
-    scruffy_tweets.main(model_source="cloud")
+    scruffy_tweets.main(model_source="cloud", random_delay=3600)
     return flask.redirect("https://twitter.com/ScruffyActually")
 
 if __name__ == "__main__":

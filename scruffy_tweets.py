@@ -7,6 +7,7 @@ import random
 import requests
 from requests_oauthlib import OAuth1
 import subprocess
+import time
 
 dotenv.load_dotenv()
 consumer_key = os.environ.get("CONSUMER_KEY") # == API key
@@ -58,9 +59,11 @@ def format_response(fact):
     return {"text": "{}".format(fact)}
 
 
-def main(model_source: str = "local"):
+def main(model_source: str = "local", random_delay: int = None):
     auth = OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
     action = random.choice(["post"]) # TODO support "reply"
+    if random_delay:
+        time.sleep(random.randint(0, random_delay))
     if action == "post":
         prompt = "You are Ian McEwan's loyal and intelligent pet cocker spaniel. Write a short tweet that referencing ONLY one of: a fact about Ian McEwan, your relationship with him, or your thoughts on one of his (specifically named) works. Don't be too sentimental in your tweet. Include specific factual detail bout his work where appropriate (e.g. book titles, character names, etc.)."
         response = requests.post(
