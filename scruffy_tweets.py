@@ -23,7 +23,7 @@ def generate_tweet(prompt: str, model_source: str):
         build_dir = pathlib.Path(__file__).parent.resolve() / "build"
         program_path = build_dir / 'llama.cpp/main'
         model_path = build_dir / 'llama-2-7b-chat.Q4_K_M.gguf'
-        command = [program_path, '-m', model_path, '-p', formatted_prompt, '--log-disable']
+        command = [program_path, '-m', model_path, '-p', formatted_prompt, '--log-disable', '--temp', '5']
 
         completed_process = subprocess.run(
             command, 
@@ -42,7 +42,12 @@ def generate_tweet(prompt: str, model_source: str):
         response = requests.post(
             url="https://api.deepinfra.com/v1/inference/meta-llama/Llama-2-7b-chat-hf",
             headers=headers,
-            data=json.dumps({"input": formatted_prompt})
+            data=json.dumps(
+                {
+                    "input": formatted_prompt,
+                    "temperature": 0.95,
+                }
+            )
         )
         if not response.ok:
             raise Exception(response.status_code, response.text)
@@ -56,24 +61,29 @@ def generate_tweet(prompt: str, model_source: str):
 
 
 def format_response(fact):
-    return {"text": "{}".format(fact)}
+    return {"text": fact}
 
 
-def main(model_source: str = "local", random_delay: int = None):
+def main(model_source: str = "local", random_delay: int = None, return_tweet_only: bool = False):
     auth = OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
     action = random.choice(["post"]) # TODO support "reply"
     if random_delay:
         time.sleep(random.randint(0, random_delay))
     if action == "post":
         prompt = "You are Ian McEwan's loyal and intelligent pet cocker spaniel. Write a short tweet that referencing ONLY one of: a fact about Ian McEwan, your relationship with him, or your thoughts on one of his (specifically named) works. Don't be too sentimental in your tweet. Include specific factual detail bout his work where appropriate (e.g. book titles, character names, etc.)."
-        response = requests.post(
-            auth=auth,
-            url="https://api.twitter.com/2/tweets",
-            json=format_response(generate_tweet(prompt=prompt, model_source=model_source)),
-            headers={"Content-Type": "application/json"}
-        )
-        if not response.ok:
-            raise Exception(response.status_code, response.text)
+        tweet = generate_tweet(prompt=prompt, model_source=model_source)
+        if return_tweet_only:
+            return tweet
+        else:
+            response = requests.post(
+                auth=auth,
+                url="https://api.twitter.com/2/tweets",
+                json={"text": tweet},
+                headers={"Content-Type": "application/json"}
+            )
+            if not response.ok:
+                raise Exception(response.status_code, response.text)
+
     elif action == "reply":
         # Searching tweets via API requires 'basic'  access ($100/month)!
         # url = 'https://api.twitter.com/1.1/search/tweets.json?q=nasa&result_type=popular'
@@ -83,5 +93,9 @@ def main(model_source: str = "local", random_delay: int = None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model-source", type=str, choices=["local", "cloud"], default="local")
+    parser.add_argument("--print-only", action="store_true", default=False)
     args = parser.parse_args()
-    main(model_source=args.model_source)
+    if args.print_only:
+        print(main(model_source=args.model_source, return_tweet_only=True))
+    else:
+        main(model_source=args.model_source)
