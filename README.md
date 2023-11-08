@@ -73,3 +73,7 @@ DEEPCTLTOKEN="..."
 ```
 
 The Flask web app `app.py` (hosted on [Render](https://scruffy-tweets.onrender.com)) makes a tweet when launched. This is scheduled to run daily (at 9am with a random delay) via a [cron job](https://console.cron-job.org/).
+
+## TODO
+
+- Write tweet history to a DB, and for each new tweet, do some prompt engineering to include previous tweets and an instruction to avoid repitition.
